@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Juego 2D: JavaScript VOID</title>
+      <style>
+          * {
+              padding: 0;
+              margin: 0;
+            }
+            canvas {
+              background-image: url(img/FONDO.png); /* Imagen de fondo para el CANVAS*/
+              display: block;
+              margin: 0 auto;
+            }
+            </style>
+        </head>
+          <body>
+            <center>
+              <p style="font-family:Montserrat;font-size: 40px;">JUEGO <span style="color:#FF0000">ROMPER TODOS</span> LOS LADRILLOS</p>
+            </center>
+
+            <canvas id="miCanvas" width="800" height="600"></canvas> <!--Aqui se agrega el Elemeto CANVAS-->
+            <script> //Inicio del JavaScript
+
+            //////////VARIABLES//////////
+var canvas = document.getElementById("miCanvas");//Elemento Canvas
+var ctx = canvas.getContext("2d");
+var img = new Image();
+//
+var x=canvas.width/2;    //Coordenadas incio horizontal
+var y=canvas.height -60; //Coordenadas inicio vertical
+//
+var dx=-3.2; //Dirección del cuadrado respecto a x
+var dy=-2;//Dirección del cuadrado respecto a y
+//
+var AlturaPaletaVoid = 35;    //Altura paleta
+var AnchuraPaletaVoid = 150;  //Anchura paleta
+var PaletaPosXVoid = (canvas.width - AnchuraPaletaVoid) / 2; //Poscion paleta
+//
+var FlechaDerPVoid = false; //Estado de tecla presionada
+var FlechaIzqPVoid = false; //Estado de tecla preionada
+//
+var puntajeVoid = 0; //Estado inicial del puntaje
+//
+var vidasVoid = 3;
+//
+var nroFilasLadrillosVoid = 5;         // Número de Filas
+var nroColumnasLadrillosVoid = 2;      // Número de columnas
+var anchoLadrilloVoid = 120;            // Ancho de los ladrillos
+var alturaLadrilloVoid = 40;           // Altura de los ladrillos
+var rellenoLadrilloVoid = 30;          // Relleno de los ladrillos
+var vacioSuperiorLadrilloVoid = 31;    // Vavio Superior de los ladrillos
+var vacioIzquierdoLadrilloVoid = 40;   // vacio de la izquierda a los ladrillos
+//
+var nroFilasLadrillosVoid2 = 5;         // Número de Filas
+var nroColumnasLadrillosVoid2 = 2;      // Número de columnas
+var anchoLadrilloVoid2 = 140;            // Ancho de los ladrillos
+var alturaLadrilloVoid2 = 40;           // Altura de los ladrillos
+var rellenoLadrilloVoid2 = 10;          // Relleno de los ladrillos
+var vacioSuperiorLadrilloVoid2 = 160;    // Vavio Superior de los ladrillos
+var vacioIzquierdoLadrilloVoid2 = 30;   // vacio de la izquierda a los ladrillos
+//
+var nroFilasLadrillosVoid3 = 5;         // Número de Filas
+var nroColumnasLadrillosVoid3 = 2;      // Número de columnas
+var anchoLadrilloVoid3 = 140;            // Ancho de los ladrillos
+var alturaLadrilloVoid3 = 50;           // Altura de los ladrillos
+var rellenoLadrilloVoid3 = 15;          // Relleno de los ladrillos
+var vacioSuperiorLadrilloVoid3 = 30;    // Vavio Superior de los ladrillos
+var vacioIzquierdoLadrilloVoid3 = 20;   // vacio de la izquierda a los ladrillos
+//
+var ladrillosVoid = []; //Conjunto de ladrillos vacios
+//
+for(var c=0; c<nroColumnasLadrillosVoid; c++){
+  //Define la primera columna. Lista vertical
+  ladrillosVoid[c] = [];
+    for(var f=0; f<nroFilasLadrillosVoid; f++){
+      ladrillosVoid[c][f] = {x: 0, y: 0, estado: 1};
+    }
+}
+//
+var ladrillosVoid2 = []; //Conjunto de ladrillos vacios
+//
+for(var c2=0; c2<nroColumnasLadrillosVoid2; c2++){
+  //Define la primera columna. Lista vertical
+  ladrillosVoid2[c2] = [];
+    for(var f2=0; f2<nroFilasLadrillosVoid2; f2++){
+      ladrillosVoid2[c2][f2] = {x: 0, y: 0, estado2: 1};
+    }
+}
+//
+var ladrillosVoid3 = []; //Conjunto de ladrillos vacios
+//
+for(var c3=0; c3<nroColumnasLadrillosVoid3; c3++){
+  //Define la primera columna. Lista vertical
+  ladrillosVoid3[c3] = [];
+    for(var f3=0; f3<nroFilasLadrillosVoid3; f3++){
+      ladrillosVoid3[c3][f3] = {x: 0, y: 0, estado3: 1};
+    }
+}
+//
+document.addEventListener("keydown", ManejarTeclaPresionada, false); //Observador
+document.addEventListener("keyup", ManejarTeclaLiberada, false); //Observador
+//
+//Funciones
+//
+function ManejarTeclaPresionada(e){ //Funcion encargada de cambiar el estado de la tecla cuando se preiosna(true)
+  if(e.keyCode == 39){
+    FlechaDerPVoid = true;
+  }
+    else if(e.keyCode == 37){
+      FlechaIzqPVoid = true;
+    }
+}
+//
+function ManejarTeclaLiberada(e){ //Funcion encargada de cambiar el estado de la tecla cuando se preiosna(false)
+  if(e.keyCode == 39){
+    FlechaDerPVoid = false;
+  }
+  else if(e.keyCode == 37){
+    FlechaIzqPVoid = false;
+  }
+}
+//
+function DeteccionColisionVoid(){
+  for(var c=0; c<nroColumnasLadrillosVoid; c++){
+    for(var f=0; f<nroFilasLadrillosVoid; f++){
+      var b = ladrillosVoid[c][f];
+      if(b.estado == 1){
+        if(x > b.x-40 && x < b.x+anchoLadrilloVoid+5 && y > b.y-30 && y < b.y+alturaLadrilloVoid){
+          dy = -dy;
+          b.estado = 0;
+          puntajeVoid++;
+          if(puntajeVoid == nroFilasLadrillosVoid*nroColumnasLadrillosVoid+nroFilasLadrillosVoid2*nroColumnasLadrillosVoid2){
+            alert("GANASTE!!! FELICITACIONES :3!!!");
+            document.location.reload();
+          }
+        }
+      }
+    }
+  }
+}
+//
+function DeteccionColisionVoid2(){
+  for(var c2=0; c2<nroColumnasLadrillosVoid2; c2++){
+    for(var f2=0; f2<nroFilasLadrillosVoid2; f2++){
+      var b2 = ladrillosVoid2[c2][f2];
+      if(b2.estado2 == 1){
+        if(x > b2.x-37 && x < b2.x+anchoLadrilloVoid2+5 && y > b2.y-30 && y < b2.y+alturaLadrilloVoid2){
+          dy = -dy;
+          b2.estado2 = 0;
+          puntajeVoid++;
+          if(puntajeVoid == nroFilasLadrillosVoid*nroColumnasLadrillosVoid+nroFilasLadrillosVoid2*nroColumnasLadrillosVoid2){
+            alert("GANASTE!!! FELICITACIONES :3!!!");
+            document.location.reload();
+          }
+        }
+      }
+    }
+  }
+}
+//
+function DeteccionColisionVoid3(){
+  for(var c3=0; c3<nroColumnasLadrillosVoid3; c3++){
+    for(var f3=0; f3<nroFilasLadrillosVoid3; f3++){
+      var b3 = ladrillosVoid3[c3][f3];
+      if(b3.estado3 == 1){
+        if(x > b3.x-36 && x < b3.x+anchoLadrilloVoid3+5 && y > b3.y-30 && y < b3.y+alturaLadrilloVoid3){
+          dy = -dy;
+          b3.estado3 = 0;
+        }
+      }
+    }
+  }
+}
+//
+function DibujarPaletaVoid(){  //FUncion que dibuja la paleta
+    img.src = "img/Nether.png";
+    ctx.drawImage(img,PaletaPosXVoid, canvas.height-AlturaPaletaVoid, AnchuraPaletaVoid, AlturaPaletaVoid);
+    img.onload = function(){
+    ctx.drawImage(img,PaletaPosXVoid, canvas.height-AlturaPaletaVoid, AnchuraPaletaVoid, AlturaPaletaVoid);
+  }
+}
+//
+function DibujarpuntajeVoid() {
+  ctx.font="18px Montserrat";
+  ctx.fillStyle = "#FF0000";
+  ctx.fillText("Puntaje:"+puntajeVoid,8,20);
+}
+//
+function DibujarvidasVoid(){
+  ctx.font="18x Montserrat";
+  ctx.fillStyle = "#FF0000";
+  ctx.fillText("VIDAS:"+vidasVoid, canvas.width-80,20)
+}
+//
+function ProyectilVoid() { //Función de creación del cuadrado
+    var img = new Image();
+    img.src = "img/PROYECTIL.png"; //Imagen utilizada
+    ctx.drawImage(img, x, y); //Posición de aparición de la imagen
+    img.onload = function(){
+    ctx.drawImage(img, x, y);
+  }
+}
+//
+
+function DibujarLadrillosVoid(){
+  for(var c=0; c<nroColumnasLadrillosVoid; c++){
+    for(var f =0; f<nroFilasLadrillosVoid; f++){
+      if(ladrillosVoid[c][f].estado == 1){
+        var brickX = (f*(anchoLadrilloVoid+rellenoLadrilloVoid))+vacioIzquierdoLadrilloVoid;
+        var brickY = (c*(alturaLadrilloVoid+rellenoLadrilloVoid))+vacioSuperiorLadrilloVoid;
+        ladrillosVoid[c][f].x = brickX;
+        ladrillosVoid[c][f].y = brickY;
+        var img = new Image();
+        img.src ="img/Piedra2.png";
+        ctx.drawImage(img,brickX, brickY, anchoLadrilloVoid, alturaLadrilloVoid);
+        ctx.onload= function(){
+        ctx.drawImage(img,brickX, brickY, anchoLadrilloVoid, alturaLadrilloVoid);
+        }
+      }
+    }
+  }
+}
+//
+function DibujarLadrillosVoid2(){
+  for(var c2=0; c2<nroColumnasLadrillosVoid2; c2++){
+    for(var f2 =0; f2<nroFilasLadrillosVoid2; f2++){
+      if(ladrillosVoid2[c2][f2].estado2 == 1){
+        var brickX2 = (f2*(anchoLadrilloVoid2+rellenoLadrilloVoid2))+vacioIzquierdoLadrilloVoid2;
+        var brickY2 = (c2*(alturaLadrilloVoid2+rellenoLadrilloVoid2))+vacioSuperiorLadrilloVoid2;
+        ladrillosVoid2[c2][f2].x = brickX2;
+        ladrillosVoid2[c2][f2].y = brickY2;
+        var img = new Image();
+        img.src ="img/Madera.png";
+        ctx.drawImage(img,brickX2, brickY2, anchoLadrilloVoid2, alturaLadrilloVoid2);
+        ctx.onload= function(){
+        ctx.drawImage(img,brickX2, brickY2, anchoLadrilloVoid2, alturaLadrilloVoid2);
+        }
+      }
+    }
+  }
+}
+//
+function DibujarLadrillosVoid3(){
+  for(var c3=0; c3<nroColumnasLadrillosVoid3; c3++){
+    for(var f3 =0; f3<nroFilasLadrillosVoid3; f3++){
+      if(ladrillosVoid3[c3][f3].estado3 == 1){
+        var brickX3 = (f3*(anchoLadrilloVoid3+rellenoLadrilloVoid3))+vacioIzquierdoLadrilloVoid3;
+        var brickY3 = (c3*(alturaLadrilloVoid3+rellenoLadrilloVoid3))+vacioSuperiorLadrilloVoid3;
+        ladrillosVoid3[c3][f3].x = brickX3;
+        ladrillosVoid3[c3][f3].y = brickY3;
+        var img = new Image();
+        img.src ="img/Piedra.png";
+        ctx.drawImage(img,brickX3, brickY3, anchoLadrilloVoid3, alturaLadrilloVoid3);
+        ctx.onload= function(){
+        ctx.drawImage(img,brickX3, brickY3, anchoLadrilloVoid3, alturaLadrilloVoid3);
+        }
+      }
+    }
+  }
+}
+//
+function Dibujarvoid() { //Función de llamado a la anterior función
+    //
+    ctx.clearRect(0, 0, canvas.width, canvas.height); //Función para limpiar el CANVAS
+    //
+    ProyectilVoid(); //Llamado de función
+    x = x + dx; //Nuevo valor para x
+    y = y + dy; //Nuevo valor para y
+    //
+    DibujarLadrillosVoid();
+    //
+    DibujarLadrillosVoid2();
+    //
+    DibujarLadrillosVoid3();
+    //
+    DibujarPaletaVoid();
+    DeteccionColisionVoid();
+    DeteccionColisionVoid2();
+    DeteccionColisionVoid3();
+    DibujarpuntajeVoid();
+    DibujarvidasVoid();
+    //
+    if(y + dy > 600 || y + dy < 0) { //Condicion para que el cuadrado rebote en las coordenadad y
+      dy = -dy;
+    }
+    if(x + dx > 775 || x + dx < 0) { //Condicion para que el cuadrado rebote en las coordenadad y
+      dx = -dx;
+    }
+    else if(y + dy > 540) {   //Condicion para que el cuadrado
+        if(x > PaletaPosXVoid-30 && x < PaletaPosXVoid + AnchuraPaletaVoid) { //Se define una condición donde si al momento del cuadro pasar de cierta coordenada y y al estar en el mismo espacio de la paleta esat rebotara
+            dy = -dy;
+        }
+        else { //De lo contrario se limpiara el intervalo de la variable juego que es la que llama la funcion de Dibujar todo cada 10 milisegundos
+          vidasVoid--;
+          if(!vidasVoid){
+            clearInterval(juego);
+            alert("Perdiste :c");
+            document.location.reload();
+        }
+        else{
+          x = canvas.width/2;
+          y = canvas.height-60;
+          dx = -3.5
+          dy = -2
+ PaletaPosXVoid = (canvas.width-AnchuraPaletaVoid)/2;
+        }
+    }
+}
+
+    if(FlechaDerPVoid && PaletaPosXVoid < canvas.width-AnchuraPaletaVoid) {
+            PaletaPosXVoid += 7;
+        }
+        else if(FlechaIzqPVoid && PaletaPosXVoid > 0) { // <------------
+            PaletaPosXVoid -= 7;
+        }
+        x += dx;
+        y += dy;
+
+}
+var juego = setInterval(Dibujarvoid, 10);
+//Final del JavaScript
+</script>
